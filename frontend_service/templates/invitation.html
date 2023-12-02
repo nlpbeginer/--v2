@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Conference Management{% endblock %}
+
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="app full-width-header align-content-stretch d-flex flex-wrap">
+    {% include "sidebar.html" %}
+    <div class="app-container">
+        {% include "header.html" %}
+        <div class="app-content">
+            <div class="content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-description">
+                                <h1>会议列表</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5 class="card-title">会议邀请通知</h5>
+                                            <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="example-container">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover" id="invitation-table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">简称</th>
+                                                    <th scope="col">主题</th>
+                                                    <th scope="col">主席</th>
+                                                    <th scope="col">举办时间</th>
+                                                    <th scope="col">举办地点</th>
+                                                    <th scope="col">状态</th>
+                                                    <th scope="col">操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <th scope="row">1</th>
+                                                    <td>ICSE 2020</td>
+                                                    <td>Christer Manning</td>
+                                                    <td>2020.05.11</td>
+                                                    <td>Seoul, South Korea</td>
+                                                    <td>未处理</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-success">接受</button>
+                                                        <button type="button" class="btn btn-danger">拒绝</button>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var currentUserId = getCurrentUserId();
+        document.querySelector('#invitation-table tbody').innerHTML = '';
+
+        // 获取邀请列表
+        fetch(`http://localhost:8002/invitation/show/?user_id=${currentUserId}`)
+            .then(response => response.json())
+            .then(invitations => {
+                invitations.forEach(invitation => {
+                    // 对于每个邀请，获取会议详情
+                    fetch(`http://localhost:8002/conference/detail/?conference_id=${invitation.conference_id}`)
+                        .then(response => response.json())
+                        .then(conference => {
+                            // 创建并添加表格行
+                            var row = createTableRow(invitation, conference);
+                            document.querySelector('#invitation-table tbody').innerHTML += row;
+                        });
+                });
+            });
+    });
+
+    function createTableRow(invitation, conference) {
+        // 根据状态设置按钮的可用性
+        var buttonsDisabled = invitation.status !== 'pending';
+
+        // 分割topics字符串为一个主题数组
+        var topicsArray = conference.topics.split(',');
+
+        // 为每个主题创建一个checkbox
+        var topicsHtml = topicsArray.map(topic => {
+            return `<input type="checkbox" name="topics" value="${topic.trim()}"> ${topic.trim()}<br>`;
+        }).join('');
+
+        return `<tr>
+        <th scope="row">${invitation.id}</th>
+        <td>${conference.acronym}</td>
+        <td>${topicsHtml}</td>
+        <td>${conference.chair_id}</td>
+        <td>${conference.held_date}</td>
+        <td>${conference.location}</td>
+        <td>${invitation.status}</td>
+        <td>
+            <button type="button" class="btn btn-success accept-invitation" data-invitation-id="${invitation.id}" ${buttonsDisabled ? 'disabled' : ''}>接受</button>
+            <button type="button" class="btn btn-danger reject-invitation" data-invitation-id="${invitation.id}" ${buttonsDisabled ? 'disabled' : ''}>拒绝</button>
+        </td>
+    </tr>`;
+    }
+
+    function getCurrentUserId() {
+        return document.getElementById('current-user-id').getAttribute('data-user-id');
+    }
+
+    document.getElementById('invitation-table').addEventListener('click', function (event) {
+        if (event.target.classList.contains('accept-invitation')) {
+            var invitationId = event.target.getAttribute('data-invitation-id');
+            var row = event.target.closest('tr');
+            var checkboxes = row.querySelectorAll('input[type="checkbox"][name="topics"]');
+
+            var selectedTopics = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+
+            if (selectedTopics.length === 0) {
+                alert("请至少选择一个主题！");
+                return;
+            }
+            sendInvitationResponse('accept', invitationId, selectedTopics);
+        } else if (event.target.classList.contains('reject-invitation')) {
+            var invitationId = event.target.getAttribute('data-invitation-id');
+            sendInvitationResponse('reject', invitationId);
+        }
+    });
+
+
+    function sendInvitationResponse(action, invitationId, selectedTopics = []) {
+        var url = action === 'accept' ? 'http://localhost:8002/invitation/accept/' : 'http://localhost:8002/invitation/reject/';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // 确保这里正确处理 CSRF 令牌
+            },
+            body: JSON.stringify({
+                invitation_id: invitationId,
+                topics: selectedTopics // 添加这行来包含选中的主题
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert("接受邀请成功");
+                window.location.reload();
+                // 处理成功的响应，如更新页面状态
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // 处理错误响应
+            });
+    }
+
+
+</script>
+{% endblock %}
+

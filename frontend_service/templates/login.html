@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}登录{% endblock %}
+
+{% block content %}
+<div class="app app-auth-sign-in align-content-stretch d-flex flex-wrap justify-content-end">
+    <div class="app-auth-background">
+
+    </div>
+    <div class="app-auth-container">
+        <div class="logo">
+            <a>用户登录</a>
+        </div>
+        <p class="auth-description">请登录.<br>没有账号?点击注册👉 <a href="/sign_up">注册</a></p>
+        <h4 style="color: palevioletred">{{ error_msg }}</h4>
+        <form action="/login_check/" method="post">
+            {% csrf_token %}
+            <div class="auth-credentials m-b-xxl">
+                <label for="signInUser" class="form-label">用户名</label>
+                <input type="text" class="form-control m-b-md" id="signInUser" name="signInUser" aria-describedby="signInUser">
+
+                <label for="signInPassword" class="form-label">密码</label>
+                <input type="password" class="form-control" id="signInPassword" name="signInPassword" aria-describedby="signInPassword">
+            </div>
+            <div class="auth-submit">
+                <button type="submit" class="btn btn-primary">登录</button>
+            </div>
+
+        </form>
+        <div class="divider"></div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}注册{% endblock %}
+
+{% block content %}
+<div class="app app-auth-sign-up align-content-stretch d-flex flex-wrap justify-content-end">
+    <div class="app-auth-background">
+
+    </div>
+    <div class="app-auth-container">
+        <div class="logo">
+            <a>注册</a>
+        </div>
+        <p class="auth-description">用户注册.<br>已有账号?点击登录👉 <a href="/login">登陆</a>
+        </p>
+        <h4 style="color: palevioletred">{{ error_msg }}</h4>
+        <form action="/register/" method="post" onsubmit="validateForm(event)">
+            {% csrf_token %}
+            <div class="auth-credentials m-b-xxl">
+                <label for="signUpUsername" class="form-label">用户名</label>
+                <span id="username-validation" style="color: palevioletred"></span>
+                <input type="text" class="form-control m-b-md" id="signUpUsername" name="signUpUsername" required aria-describedby="signUpUsername"
+                       placeholder="Enter username">
+
+                <label for="signUpEmail" class="form-label">邮箱</label>
+                <span id="email-validation" style="color: palevioletred"></span>
+                <input type="email" class="form-control m-b-md" id="signUpEmail" name="signUpEmail" required aria-describedby="signUpEmail"
+                       placeholder="example@neptune.com">
+
+                <label for="signUpPassword" class="form-label">密码</label>
+                <span id="password-validation" style="color: palevioletred"></span>
+                <input type="password" class="form-control" id="signUpPassword" name="signUpPassword" required aria-describedby="signUpPassword">
+
+                <label for="signUpInstitute" class="form-label">单位</label>
+                <input type="text" class="form-control m-b-md" id="signUpInstitute" name="signUpInstitute" required aria-describedby="signUpInstitute"
+                       placeholder="Fudan University">
+
+                <label for="signUpRegion" class="form-label">区域</label>
+                <input type="text" class="form-control m-b-md" id="signUpRegion" name="signUpRegion" required aria-describedby="signUpRegion"
+                       placeholder="China">
+
+                <div id="emailHelp" class="form-text">Password must be minimum 8 characters length*</div>
+            </div>
+
+            <div class="auth-submit">
+                <!--                <a href="" class="btn btn-primary" type="submit">注册</a>-->
+                <button type="submit" class="btn btn-primary">注册</button>
+            </div>
+        </form>
+        <script>
+            function validateUsername() {
+                var username = document.getElementById('signUpUsername').value;
+                var regex = /^[a-zA-Z-][a-zA-Z0-9-_]{4,31}$/;
+                return regex.test(username);
+            }
+
+            function validatePassword() {
+                var password = document.getElementById('signUpPassword').value;
+                var username = document.getElementById('signUpUsername').value;
+                var regex = /^(?=.*[a-zA-Z])(?=.*[0-9!@#\$%\^&\*-_])[A-Za-z0-9!@#\$%\^&\*-_]{6,32}$/;
+                return regex.test(password) && !password.includes(username);
+            }
+
+            function validateEmail() {
+                var email = document.getElementById('signUpEmail').value;
+                var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+
+            function validateForm(event) {
+                var isValidUsername = validateUsername();
+                var isValidPassword = validatePassword();
+                var isValidEmail = validateEmail();
+
+                if (!isValidUsername || !isValidPassword || !isValidEmail) {
+                    // 阻止表单提交
+                    event.preventDefault();
+                    // 可以在此处添加 console.log 语句以调试
+                    return false;
+                }
+
+                // 如果所有验证都通过，则允许表单提交
+                return true;
+            }
+
+            document.getElementById('signUpUsername').addEventListener('blur', function () {
+                document.getElementById('username-validation').textContent = validateUsername() ? '' : '用户名无效';
+            });
+
+            document.getElementById('signUpPassword').addEventListener('blur', function () {
+                document.getElementById('password-validation').textContent = validatePassword() ? '' : '密码无效';
+            });
+
+            document.getElementById('signUpEmail').addEventListener('blur', function () {
+                document.getElementById('email-validation').textContent = validateEmail() ? '' : '邮箱无效';
+            });
+        </script>
+        <div class="divider"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

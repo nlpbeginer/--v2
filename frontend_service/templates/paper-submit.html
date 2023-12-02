@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Conference Management{% endblock %}
+
+{% load static %}
+
+{% block css %}
+<link href="{% static 'assets/plugins/select2/css/select2.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+<div class="app full-width-header align-content-stretch d-flex flex-wrap">
+    {% include "sidebar.html" %}
+    <div class="app-container">
+        {% include "header.html" %}
+        <div class="app-content">
+            <div class="content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-description">
+                                <h1>新增投稿</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">投稿信息</h5>
+                                    <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;"></div>
+                                </div>
+                                <div class="card-body">
+                                    <form id="paper-submission-form">
+                                        <div class="row mb-3">
+                                            <label for="input_confer_id" class="col-sm-2 col-form-label">Conference</label>
+                                            <div class="col-sm-10">
+                                                <select class="js-states form-control" tabindex="-1" id="input_confer_id" style="width: 100%">
+                                                    <optgroup label="Conference List">
+                                                        {% for confer in started_conferences %}
+                                                        <option value="{{ confer.id }}">{{ confer.acronym }}</option>
+                                                        {% endfor %}
+                                                    </optgroup>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_title" class="col-sm-2 col-form-label">Title</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="input_paper_title" maxlength="150">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Abstract</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="input_paper_abstract" maxlength="800">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_pdf" class="col-sm-2 col-form-label">File</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="input_paper_pdf" placeholder="Click to upload file">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                                        <button type="submit" class="btn btn-primary">提交</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'assets/plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+    $('select').select2();
+
+    function getCurrentUserId() {
+        return document.getElementById('current-user-id').getAttribute('data-user-id');
+    }
+
+
+    document.getElementById('paper-submission-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = {
+            title: document.getElementById('input_paper_title').value,
+            abstract: document.getElementById('input_paper_abstract').value,
+            pdf: document.getElementById('input_paper_pdf').value,
+            conference_id: document.getElementById('input_confer_id').value,
+            author_ids: getCurrentUserId(), // 假设这个函数返回当前用户ID
+        };
+
+        fetch('http://localhost:8003/paper/submit/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // 确保这里正确处理 CSRF 令牌
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                alert("投稿成功！");
+                window.location.reload();
+            })
+            .catch(error => {
+                // 处理错误
+                console.log(error);
+            });
+    });
+</script>
+{% endblock %}
+

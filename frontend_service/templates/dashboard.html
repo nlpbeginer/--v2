@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% block title %}Conference Management{% endblock %}
+
+{% load static %}
+
+{% block css %}
+<link href="{% static 'assets/plugins/flatpickr/flatpickr.min.css' %}" rel="stylesheet">
+<link href="{% static 'assets/plugins/select2/css/select2.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+<div class="app full-width-header align-content-stretch d-flex flex-wrap">
+    {% include "sidebar.html" %}
+    <div class="app-container">
+        {% include "header.html" %}
+        <div class="app-content">
+            <div class="content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-description">
+                                <h1>会议列表</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5 class="card-title">我的会议申请</h5>
+                                            <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="example-container">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">简称</th>
+                                                    <th scope="col">全称</th>
+                                                    <th scope="col">举办时间</th>
+                                                    <th scope="col">举办地点</th>
+                                                    <th scope="col">投稿截止</th>
+                                                    <th scope="col">状态</th>
+                                                    <th scope="col">操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for conference in my_conferences %}
+                                                <tr>
+                                                    <th scope="row">{{conference.id}}</th>
+                                                    <td>{{conference.acronym}}</td>
+                                                    <td>{{conference.full_name}}</td>
+                                                    <td>{{conference.held_date}}</td>
+                                                    <td>{{conference.location}}</td>
+                                                    <td>{{conference.submission_deadline}}</td>
+                                                    <td>{{conference.status}}</td>
+                                                    <td>
+                                                        {% if conference.status == 'approved' %}
+                                                        <!--                                                        <button type="button" class="btn btn-success" id='start-conference-btn'>开启会议</button>-->
+                                                        <button type="button" class="btn btn-success start-conference-btn"
+                                                                data-id="{{ conference.id }}">开启会议
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary m-b-sm" disabled>邀请PC
+                                                        </button>
+                                                        <button type="button" class="btn btn-secondary m-b-sm" disabled>开启审稿
+                                                        </button>
+                                                        {% elif conference.status == 'started' %}
+                                                        <button type="button" class="btn btn-success" disabled>开启会议</button>
+                                                        <button type="button" class="btn btn-primary m-b-sm invite-pc-btn" data-bs-toggle="modal"
+                                                                data-bs-target="#invite_pc_model" data-conference-id="{{ conference.id }}">邀请PC
+                                                        </button>
+                                                        <button type="button" class="btn btn-secondary m-b-sm start-reviewing-btn"
+                                                                data-id="{{ conference.id }}">开启审稿
+                                                        </button>
+                                                        {% else %}
+                                                        <button type="button" class="btn btn-success" disabled>开启会议</button>
+                                                        <button type="button" class="btn btn-primary m-b-sm" data-bs-toggle="modal"
+                                                                data-bs-target="#invite_pc_model" disabled>邀请PC
+                                                        </button>
+                                                        <button type="button" class="btn btn-secondary m-b-sm" disabled>开启审稿
+                                                        </button>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <h5 class="card-title">会议列表</h5>
+                                        </div>
+                                        <div class="col-2">
+                                            <button type="button" class="btn btn-primary m-b-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#add_confer_model">
+                                                <i class="material-icons">add</i>会议申请
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="example-container">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">简称</th>
+                                                    <th scope="col">全称</th>
+                                                    <th scope="col">主题</th>
+                                                    <th scope="col">主席</th>
+                                                    <th scope="col">举办时间</th>
+                                                    <th scope="col">举办地点</th>
+                                                    <th scope="col">投稿截止</th>
+                                                    <th scope="col">状态</th>
+                                                    <th scope="col">操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for conference in all_conferences %}
+                                                <tr>
+                                                    <th scope="row">{{conference.id}}</th>
+                                                    <td>{{conference.acronym}}</td>
+                                                    <td>{{conference.full_name}}</td>
+                                                    <td>{{conference.topics}}</td>
+                                                    <td>{{conference.chair_name}}</td>
+                                                    <td>{{conference.held_date}}</td>
+                                                    <td>{{conference.location}}</td>
+                                                    <td>{{conference.submission_deadline}}</td>
+                                                    <td>{{conference.status}}</td>
+                                                    <td>
+                                                        {% if conference.status == 'started' %}
+                                                        <button type="button" class="btn btn-dark" onclick="window.location.href='/submit';">投稿
+                                                        </button>
+                                                        {% else %}
+                                                        <button type="button" class="btn btn-dark" disabled>投稿</button>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Vertically centered modal -->
+<div class="modal fade" id="add_confer_model" tabindex="-1" aria-labelledby="addConferModelTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addConferModelTitle">新增会议</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/create_conference/" method="post">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <label for="input_confer_abbre" class="col-sm-2 col-form-label">会议简称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input_confer_abbre" name="input_confer_abbre" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="input_confer_full" class="col-sm-2 col-form-label">会议全称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input_confer_full" name="input_confer_full" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="input_confer_full" class="col-sm-2 col-form-label">会议主题</label>
+                        <div class="col-sm-10">
+                            <select class="js-example-tokenizer js-states form-control" name="input_confer_topics" multiple="multiple" tabindex="-1"
+                                    style="display: none; width: 100%" required>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="input_held_time" class="col-sm-2 col-form-label">举办时间</label>
+                        <div class="col-sm-10">
+                            <input class="form-control flatpickr2" type="text" id="input_held_time" name="input_held_time"
+                                   placeholder="Select Time.." required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="input_held_locate" class="col-sm-2 col-form-label">举办地点</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="input_held_locate" name="input_held_locate" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="input_submit_ddl" class="col-sm-2 col-form-label">投稿截止日期</label>
+                        <div class="col-sm-10">
+                            <input class="form-control flatpickr2" type="text" id="input_submit_ddl" name="input_submit_ddl"
+                                   placeholder="Select Time.." required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="input_review_ddl" class="col-sm-2 col-form-label">审稿结束</label>
+                        <div class="col-sm-10">
+                            <input class="form-control flatpickr2" type="text" id="input_review_ddl" name="input_review_ddl"
+                                   placeholder="Select Time.." required>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+                <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="invite_pc_model" tabindex="-1" aria-labelledby="invitePCModelTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="invitePCModelTitle">邀请PC</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover" id="pc_invitation_table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">选取</th>
+                        <th scope="col">用户名</th>
+                        <th scope="col">邮箱</th>
+                        <th scope="col">区域</th>
+                        <th scope="col">状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>
+                            <input type="checkbox" name="checked_items" value="{{ item.id }}">
+                        </td>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--                <button type="submit" class="btn btn-primary">邀请</button>-->
+                <button id="submit-invitations" type="button" class="btn btn-primary">邀请</button>
+            </div>
+            <div class="modal-footer">
+                <!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+                <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script src="{% static 'assets/plugins/flatpickr/flatpickr.js' %}"></script>
+<script src="{% static 'assets/js/pages/select2.js' %}"></script>
+<script src="{% static 'assets/plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+    $(".flatpickr2").flatpickr({
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+    });
+    $(".js-example-tokenizer").select2({
+        tags: true,
+        tokenSeparators: [',', ' ']
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.start-conference-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                var conferenceId = this.getAttribute('data-id');
+                fetch('http://localhost:8002/conference/update-status/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        id: conferenceId,
+                        status: 'started'
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('会议开启成功！')
+                        console.log(data);
+                        window.location.reload();
+                        // 处理成功响应
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        // 处理错误响应
+                    });
+            });
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // 为开启审稿的按钮添加事件监听器
+        document.querySelectorAll('.start-reviewing-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                var conferenceId = this.getAttribute('data-id');
+                startReviewing(conferenceId);
+            });
+        });
+    });
+
+    function startReviewing(conferenceId) {
+        fetch('http://localhost:8002/conference/update-status/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // 确保这里正确处理 CSRF 令牌
+            },
+            body: JSON.stringify({
+                id: conferenceId,
+                status: 'reviewing'
+            })
+        })
+            .then(response => response.json()) // 首先将响应转换为JSON
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('会议开启审稿成功！');
+                    console.log(data);
+                    window.location.reload();
+                } else {
+                    // 如果响应中包含错误信息，则显示该错误信息
+                    alert(data.error || '发生未知错误');
+                }
+            })
+            .catch((error) => {
+                // 处理网络请求本身出现的错误
+                console.error('Error:', error);
+                alert('网络请求失败，请检查网络连接或联系管理员');
+            });
+    }
+
+
+    async function updateUsersWithInvitationStatus(userList, conferenceId, currentUserInviteeId) {
+        for (let user of userList) {
+            let response = await fetch(`http://localhost:8002/invitation-status/?conference_id=${conferenceId}&invitee_id=${currentUserInviteeId}&pc_member_id=${user.id}`);
+            let data = await response.json();
+            user.status = data.status || '未邀请';
+        }
+        return userList;
+    }
+
+    var currentConferenceId; // 全局变量来存储当前的会议ID
+
+    document.querySelectorAll('.invite-pc-btn').forEach(button => {
+        button.addEventListener('click', async function () {
+            currentConferenceId = this.getAttribute('data-conference-id');
+            const currentUserInviteeId = document.getElementById('current-user-id').getAttribute('data-user-id');
+
+            // 发送请求获取用户列表
+            let response = await fetch('http://localhost:8001/user_list/');
+            let userList = await response.json();
+
+            // 更新用户列表中每个用户的邀请状态
+            userList = await updateUsersWithInvitationStatus(userList, currentConferenceId, currentUserInviteeId);
+
+            // 更新表格
+            updateTableWithUserList(userList);
+        });
+    });
+
+    function updateTableWithUserList(userList) {
+        var tableBody = document.querySelector('#pc_invitation_table tbody');
+        tableBody.innerHTML = ''; // 清空现有的表格内容
+
+        userList.forEach((user, index) => {
+            var isDisabled = user.status !== '未邀请'; // 如果状态不是“未邀请”，则禁用复选框
+            var disabledAttribute = isDisabled ? 'disabled' : ''; // 根据条件设置 disabled 属性
+
+            var row = `<tr>
+            <th scope="row">${index + 1}</th>
+            <td><input type="checkbox" name="checked_items" value="${user.id}" ${disabledAttribute}></td>
+            <td>${user.username}</td>
+            <td>${user.email}</td>
+            <td>${user.region}</td>
+            <td>${user.status}</td>
+        </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    document.getElementById('submit-invitations').addEventListener('click', function () {
+        var checkedBoxes = document.querySelectorAll('#pc_invitation_table tbody input[type="checkbox"]:checked');
+        // var currentUserInviteeId = "{{ request.user.id }}";  // 获取当前用户的ID
+        var currentUserInviteeId = document.getElementById('current-user-id').getAttribute('data-user-id');
+
+        var invitations = Array.from(checkedBoxes).map(box => {
+            return {
+                conference_id: currentConferenceId, // 你需要获取当前会议的ID
+                invitee_id: currentUserInviteeId,  // 设置当前用户的ID为 invitee_id
+                pc_member_id: box.value,
+                status: 'pending', // 默认状态
+                accepted_topics: '' // 默认状态
+            };
+        });
+
+        // 发送POST请求到后端
+        fetch('http://localhost:8002/invitation/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(invitations)
+        })
+            .then(response => response.json())
+            .then(data => {
+                // console.log('Invitations sent:', data);
+                alert("邀请成功！");
+                window.location.reload();
+                // 处理成功的响应
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // 处理错误响应
+            });
+    });
+
+</script>
+
+{% endblock %}
+

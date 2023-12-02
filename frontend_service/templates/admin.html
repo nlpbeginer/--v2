@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}管理员后台管理{% endblock %}
+
+{% load static %}
+
+
+{% block content %}
+<div class="app full-width-header align-content-stretch d-flex flex-wrap">
+    <div class="app-sidebar">
+        <div class="logo logo-sm">
+            <a href="">ConferenceManage</a>
+        </div>
+        <div class="app-menu">
+            <ul class="accordion-menu">
+                <li class="sidebar-title">
+                    应用
+                </li>
+                <li>
+                    <a href=""><i class="material-icons-two-tone">dashboard</i>会议审核</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="app-container">
+        {% include "header.html" %}
+        <div class="app-content">
+            <div class="content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-description">
+                                <h1>会议审核</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">会议列表</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-description">请对下列会议进行审核操作</p>
+                                    <div class="example-container">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">简称</th>
+                                                    <th scope="col">全称</th>
+                                                    <th scope="col">举办时间</th>
+                                                    <th scope="col">举办地点</th>
+                                                    <th scope="col">投稿截止</th>
+                                                    <th scope="col">状态</th>
+                                                    <th scope="col">操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for conference in all_conferences %}
+                                                <tr>
+                                                    <th scope="row">{{conference.id}}</th>
+                                                    <td>{{conference.acronym}}</td>
+                                                    <td>{{conference.full_name}}</td>
+                                                    <td>{{conference.held_date}}</td>
+                                                    <td>{{conference.location}}</td>
+                                                    <td>{{conference.submission_deadline}}</td>
+                                                    <td>{{conference.status}}</td>
+                                                    <td>
+                                                        {% if conference.status == 'pending' %}
+                                                        <form method="post" action="/conference/approve_reject/">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="conference_id" value='{{ conference.id }}'>
+                                                            <input type="submit" class="btn btn-success" name="action" value="approve">
+                                                            <input type="submit" class="btn btn-danger" name="action" value="reject">
+                                                        </form>
+                                                        {% else %}
+                                                        <button type="button" class="btn btn-success" disabled>approve</button>
+                                                        <button type="button" class="btn btn-danger" disabled>reject</button>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
