@@ -25,6 +25,7 @@ urlpatterns = [
     path('conference/detail/', ConferenceDetailView.as_view(), name='conference-detail'),
     path('conference/approve_reject/', ApproveRejectConferenceView.as_view(), name='approve-reject-conference'),
     path('conference/update-status/', ConferenceStatusUpdateView.as_view(), name='conference-update-status'),
+    path('conference/allocate/', ConferenceAllocateView.as_view(), name='conference-allocation'),
     path('invitation-status/', InvitationStatusAPIView.as_view(), name='invitation-status'),
     path('invitation/create/', InvitationCreateView.as_view(), name='invitation-create'),
     path('invitation/show/', UserInvitationsAPIView.as_view(), name='user-invitations'),

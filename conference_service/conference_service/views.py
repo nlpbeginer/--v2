@@ -1,4 +1,5 @@
 import requests
+import random
 
 from django.shortcuts import get_object_or_404
 
@@ -81,6 +82,42 @@ class ConferenceStatusUpdateView(APIView):
             return Response({'msg': '会议状态更新成功'}, status=status.HTTP_200_OK)
         except Conference.DoesNotExist:
             return Response({'error': '会议不存在'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# 分配审稿人给conference
+class ConferenceAllocateView(APIView):
+    def post(self, request, format=None):
+        conference_id = request.data.get('conference_id')
+
+        # 获取该会议的所有接受邀请的PC成员
+        pc_members = list(Invitation.objects.filter(conference_id=conference_id, status='accepted').values_list('pc_member_id', flat=True))
+
+        if len(pc_members) < 3:
+            return Response({'error': '需要至少3名PC成员进行审稿'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 从Paper服务获取该会议的所有稿件
+        papers_response = requests.get(f'http://localhost:8003/papers/?conference_id={conference_id}')
+        if papers_response.status_code != 200:
+            return Response({'error': '无法获取稿件信息'}, status=status.HTTP_400_BAD_REQUEST)
+
+        papers = papers_response.json()
+
+        # 随机分配每篇稿件给3名不同的PC成员
+        for paper in papers:
+            selected_reviewers = random.sample(pc_members, 3)
+            for reviewer_id in selected_reviewers:
+                review_data = {
+                    'paper_id': paper['id'],
+                    'reviewer_id': reviewer_id,
+                    'score': 0,
+                    'comment': '',
+                    'decision': ''
+                }
+                review_response = requests.post('http://localhost:8003/reviews/create/', json=review_data)
+                if review_response.status_code != 201:
+                    return Response({'error': '审稿分配失败'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response({'status': '分配成功'}, status=status.HTTP_200_OK)
 
 
 # Invitation

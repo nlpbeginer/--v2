@@ -69,6 +69,31 @@ def invitation(request):
     return render(request, 'invitation.html', {'user_info': user_info})
 
 
+def my_review(request):
+    user_info = request.session.get('user_info')
+    pc_member_id = user_info['id']
+
+    # 向Paper服务发送请求以获取审稿数据
+    response = requests.get(f'http://localhost:8003/reviews/show/?pc_member_id={pc_member_id}')
+    if response.status_code == 200:
+        review_info = response.json()
+    else:
+        review_info = []
+
+    return render(request, 'my-review.html', {
+        'user_info': user_info,
+        'review_info': review_info
+    })
+
+
+def my_review_start_submit(request):
+    user_info = request.session.get('user_info')
+
+    return render(request, 'my-review-submit.html', {
+        'user_info': user_info,
+    })
+
+
 def register(request):
     if request.method == 'POST':
         # 获取表单数据

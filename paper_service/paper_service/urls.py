@@ -16,9 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import PaperSubmissionView
+from .views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('papers/', PaperListView.as_view(), name='paper-list'),
     path('paper/submit/', PaperSubmissionView.as_view(), name='paper-submit'),
+    path('reviews/create/', NewReviewsView.as_view(), name='reviews-create'),
+    path('reviews/show/', MyReviewsView.as_view(), name='reviews-show'),
+
 ]

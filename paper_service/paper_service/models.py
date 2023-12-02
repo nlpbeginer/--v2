@@ -22,6 +22,6 @@ class Paper(models.Model):
 class Review(models.Model):
     paper_id = models.IntegerField()  # 只存储论文的ID
     reviewer_id = models.IntegerField()  # 只存储审稿人的用户ID
-    score = models.IntegerField()
-    comment = models.TextField()
-    decision = models.CharField(max_length=50)  # 如 'accept', 'reject'
+    score = models.IntegerField(blank=True)
+    comment = models.TextField(blank=True)
+    decision = models.CharField(max_length=50, blank=True)  # 如 'accept', 'reject'

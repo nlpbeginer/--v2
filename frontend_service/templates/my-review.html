@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Conference Management{% endblock %}
+
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="app full-width-header align-content-stretch d-flex flex-wrap">
+    {% include "sidebar.html" %}
+    <div class="app-container">
+        {% include "header.html" %}
+        <div class="app-content">
+            <div class="content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-description">
+                                <h1>我的审稿</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5 class="card-title">待审稿</h5>
+                                            <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="example-container">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover" id="invitation-table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">会议</th>
+                                                    <th scope="col">标题</th>
+                                                    <th scope="col">摘要</th>
+                                                    <th scope="col">预览</th>
+                                                    <th scope="col">状态</th>
+                                                    <th scope="col">操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for review in review_info %}
+                                                <tr>
+                                                    <th scope="row">{{ forloop.counter }}</th>
+                                                    <td>{{ review.conference_name }}</td>
+                                                    <td>{{ review.title }}</td>
+                                                    <td>{{ review.abstract }}</td>
+                                                    <td><a href="" target="_blank">预览</a></td>
+                                                    <td>{{ review.status }}</td>
+                                                    <td>
+                                                        <a href="" class="btn btn-info" download>下载</a>
+                                                        <!-- 根据需求添加审稿按钮的逻辑 -->
+                                                        <a href="/start_review" class="btn btn-primary">审稿</a>
+                                                        <!--                                                        <button type="button" class="btn btn-secondary">审稿</button>-->
+                                                    </td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="6">没有分配的审稿</td>
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+
+
+</script>
+{% endblock %}
+

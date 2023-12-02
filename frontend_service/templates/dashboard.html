@@ -73,6 +73,9 @@
                                                         </button>
                                                         <button type="button" class="btn btn-secondary m-b-sm" disabled>开启审稿
                                                         </button>
+                                                        <button type="button" class="btn btn-info m-b-sm allocate-paper-btn"
+                                                                data-id="{{ conference.id }}" disabled>分配稿件
+                                                        </button>
                                                         {% elif conference.status == 'started' %}
                                                         <button type="button" class="btn btn-success" disabled>开启会议</button>
                                                         <button type="button" class="btn btn-primary m-b-sm invite-pc-btn" data-bs-toggle="modal"
@@ -81,12 +84,29 @@
                                                         <button type="button" class="btn btn-secondary m-b-sm start-reviewing-btn"
                                                                 data-id="{{ conference.id }}">开启审稿
                                                         </button>
+                                                        <button type="button" class="btn btn-info m-b-sm allocate-paper-btn"
+                                                                data-id="{{ conference.id }}" disabled>分配稿件
+                                                        </button>
+                                                        {% elif conference.status == 'reviewing' %}
+                                                        <button type="button" class="btn btn-success" disabled>开启会议</button>
+                                                        <button type="button" class="btn btn-primary m-b-sm invite-pc-btn" data-bs-toggle="modal"
+                                                                data-bs-target="#invite_pc_model" data-conference-id="{{ conference.id }}">邀请PC
+                                                        </button>
+                                                        <button type="button" class="btn btn-secondary m-b-sm start-reviewing-btn"
+                                                                data-id="{{ conference.id }}" disabled>开启审稿
+                                                        </button>
+                                                        <button type="button" class="btn btn-info m-b-sm allocate-paper-btn"
+                                                                data-id="{{ conference.id }}">分配稿件
+                                                        </button>
                                                         {% else %}
                                                         <button type="button" class="btn btn-success" disabled>开启会议</button>
                                                         <button type="button" class="btn btn-primary m-b-sm" data-bs-toggle="modal"
                                                                 data-bs-target="#invite_pc_model" disabled>邀请PC
                                                         </button>
                                                         <button type="button" class="btn btn-secondary m-b-sm" disabled>开启审稿
+                                                        </button>
+                                                        <button type="button" class="btn btn-info m-b-sm allocate-paper-btn"
+                                                                data-id="{{ conference.id }}" disabled>分配稿件
                                                         </button>
                                                         {% endif %}
                                                     </td>
@@ -297,6 +317,8 @@
         tags: true,
         tokenSeparators: [',', ' ']
     });
+
+    // 开始会议
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.start-conference-btn').forEach(button => {
             button.addEventListener('click', function () {
@@ -327,6 +349,7 @@
         });
     });
 
+    // 开始审稿
     document.addEventListener('DOMContentLoaded', function () {
         // 为开启审稿的按钮添加事件监听器
         document.querySelectorAll('.start-reviewing-btn').forEach(button => {
@@ -351,12 +374,10 @@
         })
             .then(response => response.json()) // 首先将响应转换为JSON
             .then(data => {
-                if (data.status === 'success') {
+                if (data.msg === '会议状态更新成功') {
                     alert('会议开启审稿成功！');
-                    console.log(data);
                     window.location.reload();
                 } else {
-                    // 如果响应中包含错误信息，则显示该错误信息
                     alert(data.error || '发生未知错误');
                 }
             })
@@ -364,6 +385,44 @@
                 // 处理网络请求本身出现的错误
                 console.error('Error:', error);
                 alert('网络请求失败，请检查网络连接或联系管理员');
+            });
+    }
+
+    // 分配稿件
+    document.addEventListener('DOMContentLoaded', function () {
+        // 为每个分配稿件的按钮添加事件监听器
+        document.querySelectorAll('.allocate-paper-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                var conferenceId = this.getAttribute('data-id');
+                allocatePapers(conferenceId);
+            });
+        });
+    });
+
+    function allocatePapers(conferenceId) {
+        fetch('http://localhost:8002/conference/allocate/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // 确保这里正确处理 CSRF 令牌
+            },
+            body: JSON.stringify({
+                conference_id: conferenceId
+            })
+        })
+            .then(response => response.json()) // 首先将响应转换为JSON
+            .then(data => {
+                if (data.error) {
+                    alert(data.error); // 如果后端返回错误信息，则显示
+                } else {
+                    alert('稿件分配成功！');
+                    console.log(data);
+                    window.location.reload();
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('发生错误，请检查网络或联系管理员');
             });
     }
 
@@ -423,7 +482,7 @@
 
         var invitations = Array.from(checkedBoxes).map(box => {
             return {
-                conference_id: currentConferenceId, // 你需要获取当前会议的ID
+                conference_id: currentConferenceId, // 需要获取当前会议的ID
                 invitee_id: currentUserInviteeId,  // 设置当前用户的ID为 invitee_id
                 pc_member_id: box.value,
                 status: 'pending', // 默认状态

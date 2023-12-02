@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Conference Management{% endblock %}
+
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="app full-width-header align-content-stretch d-flex flex-wrap">
+    {% include "sidebar.html" %}
+    <div class="app-container">
+        {% include "header.html" %}
+        <div class="app-content">
+            <div class="content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-description">
+                                <h1>审稿</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;"></div>
+                                        </div>
+                                    </div>
+                                    <dl class="row">
+                                        <dt class="col-sm-3">标题</dt>
+                                        <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
+                                    </dl>
+                                    <dl class="row">
+                                        <dt class="col-sm-3">摘要</dt>
+                                        <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
+                                    </dl>
+                                </div>
+                                <div class="card-body">
+                                    <form action="/create_conference/" method="post">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">评分</span>
+                                            <select class="form-select" aria-label="Default select example" required>
+                                                <option selected>请选择你的评分</option>
+                                                <option value="-2">-2 -> reject</option>
+                                                <option value="-1">-1 -> weak reject</option>
+                                                <option value="1">1 -> weak accept</option>
+                                                <option value="2">2 -> accept</option>
+                                            </select>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon2">Confidence</span>
+                                            <select class="form-select" aria-label="Default select example" required>
+                                                <option selected>请选择你的Confidence</option>
+                                                <option value="1">very low</option>
+                                                <option value="2">low</option>
+                                                <option value="3">high</option>
+                                                <option value="4">very high</option>
+                                            </select>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">评语</span>
+                                            <textarea class="form-control" aria-label="With textarea" maxlength="800" required></textarea>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <button type="submit" class="btn btn-primary">提交</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+
+
+</script>
+{% endblock %}
+
