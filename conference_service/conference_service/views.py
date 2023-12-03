@@ -104,6 +104,11 @@ class ConferenceAllocateView(APIView):
 
         # 随机分配每篇稿件给3名不同的PC成员
         for paper in papers:
+            # 检查是否已经有分配的审稿人
+            existing_reviews = requests.get(f'http://localhost:8003/reviews/?paper_id={paper["id"]}')
+            if existing_reviews.status_code != 200 or len(existing_reviews.json()) >= 3:
+                continue  # 如果已经有审稿人或无法获取审稿信息，则跳过此论文
+
             selected_reviewers = random.sample(pc_members, 3)
             for reviewer_id in selected_reviewers:
                 review_data = {

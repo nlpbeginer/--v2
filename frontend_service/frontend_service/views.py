@@ -87,11 +87,40 @@ def my_review(request):
 
 
 def my_review_start_submit(request):
-    user_info = request.session.get('user_info')
+    if request.method == 'POST':
+        user_info = request.session.get('user_info')
+        conference_name = request.POST.get('conference_name')
+        paper_id = request.POST.get('paper_id')
+        title = request.POST.get('title')
+        abstract = request.POST.get('abstract')
 
-    return render(request, 'my-review-submit.html', {
-        'user_info': user_info,
-    })
+        response = requests.get(f'http://localhost:8003/reviews/?paper_id={paper_id}&reviewer_id={user_info["id"]}')
+        if response.status_code == 200:
+            one_review = response.json()[0]
+        else:
+            one_review = None
+
+        if one_review is not None:
+            review_info = {
+                'conference_name': conference_name,
+                'paper_id': paper_id,
+                'title': title,
+                'abstract': abstract,
+                'score': one_review['score'],
+                'confidence': one_review['confidence'],
+                'comment': one_review['comment'],
+            }
+        else:
+            review_info = {
+                'conference_name': conference_name,
+                'paper_id': paper_id,
+                'title': title,
+                'abstract': abstract,
+            }
+        return render(request, 'my-review-submit.html', {
+            'user_info': user_info,
+            'review_info': review_info,
+        })
 
 
 def register(request):
@@ -224,3 +253,9 @@ def invite_pc_conference(request):
         user_list_response = requests.get('http://localhost:8001/user_list/')
         user_list = user_list_response.json() if user_list_response.status_code == 200 else None
         # print("user_info", user_info)
+
+
+def rebuttal(request):
+    user_info = request.session.get('user_info')
+
+    return render(request, 'rebuttal.html', {'user_info': user_info})

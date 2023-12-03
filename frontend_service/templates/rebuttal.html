@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="page-description">
-                                <h1>新增投稿</h1>
+                                <h1>Rebuttal</h1>
                             </div>
                         </div>
                     </div>
@@ -28,7 +28,7 @@
                         <div class="col">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="card-title">投稿信息</h5>
+                                    <h5 class="card-title">Paper information:</h5>
                                     <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;"></div>
                                 </div>
                                 <div class="card-body">
@@ -38,9 +38,7 @@
                                             <div class="col-sm-10">
                                                 <select class="js-states form-control" tabindex="-1" id="input_confer_id" style="width: 100%">
                                                     <optgroup label="Conference List">
-                                                        {% for confer in started_conferences %}
-                                                        <option value="{{ confer.id }}">{{ confer.acronym }}</option>
-                                                        {% endfor %}
+                                                        <option value="{{ confer.id }}">OSDI</option>
                                                     </optgroup>
                                                 </select>
                                             </div>
@@ -72,50 +70,62 @@
                                         </div>
 
                                         <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="inputEmail4" class="form-label">姓名</label>
-                                                <input type="text" class="form-control" id="inputEmail4">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="inputPassword4" class="form-label">单位</label>
-                                                <input type="text" class="form-control" id="inputPassword4">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="inputCity" class="form-label">国家</label>
-                                                <input type="text" class="form-control" id="inputCity">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="inputState" class="form-label">地区</label>
-                                                <select id="inputState" class="form-select">
-                                                    <option selected>Choose...</option>
-                                                    <option>Shanghai</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label for="inputZip" class="form-label">邮箱</label>
-                                                <input type="text" class="form-control" id="inputZip">
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="gridCheck">
-                                                    <label class="form-check-label" for="gridCheck">
-                                                        将自己设为作者
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <button type="submit" class="btn btn-primary">添加作者</button>
-                                            </div>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Reviewer 1:</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Score:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">1</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Confidence:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">2</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Comment:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Very Good.</label>
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label for="input_paper_pdf" class="col-sm-2 col-form-label">File</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Reviewer 2:</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Score:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">2</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Confidence:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">2</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Comment:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Very Good111~.</label>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Reviewer 3:</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Score:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">2</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Confidence:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">2</label>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Comment:</label>
+                                            <label for="input_paper_abstract" class="col-sm-2 col-form-label">Very Good222.</label>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 col-form-label">Rebuttal</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="input_paper_pdf" placeholder="Click to upload file">
+                                                <textarea class="form-control" name="comment" aria-label="With textarea" maxlength="800"
+                                                      required></textarea>
                                             </div>
                                         </div>
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                                        <button type="submit" class="btn btn-primary">提交</button>
+                                        <button type="submit" class="btn btn-primary" onclick="alert('提交成功！')">提交</button>
                                     </form>
                                 </div>
                             </div>
@@ -169,7 +179,7 @@
         //         console.log(error);
         //     });
 
-        alert("更新成功！");
+        alert("提交成功！");
     });
 </script>
 {% endblock %}

@@ -62,8 +62,15 @@
                                                     <td>
                                                         <a href="" class="btn btn-info" download>下载</a>
                                                         <!-- 根据需求添加审稿按钮的逻辑 -->
-                                                        <a href="/start_review" class="btn btn-primary">审稿</a>
-                                                        <!--                                                        <button type="button" class="btn btn-secondary">审稿</button>-->
+                                                        <!--<a href="/start_review" class="btn btn-primary">审稿</a>-->
+                                                        <form action="/start_review/" method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="conference_name" value="{{ review.conference_name }}">
+                                                            <input type="hidden" name="paper_id" value="{{ review.paper_id }}">
+                                                            <input type="hidden" name="title" value="{{ review.title }}">
+                                                            <input type="hidden" name="abstract" value="{{ review.abstract }}">
+                                                            <button type="submit" class="btn btn-primary">审稿</button>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                                 {% empty %}

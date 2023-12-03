@@ -28,6 +28,7 @@ urlpatterns = [
     path('submit/', views.paper_submit, name='submit'),
     path('invitation/', views.invitation, name='invite'),
     path('my_review/', views.my_review, name='review'),
+    path('rebuttal/', views.rebuttal, name='rebuttal'),
     path('start_review/', views.my_review_start_submit, name='start-review'),
     path('register/', views.register, name='register'),
     path('login_check/', views.login_check, name='login_check'),

@@ -34,39 +34,46 @@
                                         </div>
                                     </div>
                                     <dl class="row">
-                                        <dt class="col-sm-3">标题</dt>
-                                        <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
+                                        <dt class="col-sm-3">会议：</dt>
+                                        <dd class="col-sm-9">{{ review_info.conference_name }}</dd>
                                     </dl>
                                     <dl class="row">
-                                        <dt class="col-sm-3">摘要</dt>
-                                        <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
+                                        <dt class="col-sm-3">标题：</dt>
+                                        <dd class="col-sm-9">{{ review_info.title }}</dd>
+                                    </dl>
+                                    <dl class="row">
+                                        <dt class="col-sm-3">摘要：</dt>
+                                        <dd class="col-sm-9">{{ review_info.abstract }}</dd>
                                     </dl>
                                 </div>
                                 <div class="card-body">
-                                    <form action="/create_conference/" method="post">
+                                    <form action="http://localhost:8003/reviews/update/" method="post">
+                                        <input type="hidden" name="paper_id" value="{{ review_info.paper_id }}">
+                                        <input type="hidden" name="reviewer_id" value="{{ user_info.id }}">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="basic-addon1">评分</span>
-                                            <select class="form-select" aria-label="Default select example" required>
-                                                <option selected>请选择你的评分</option>
-                                                <option value="-2">-2 -> reject</option>
-                                                <option value="-1">-1 -> weak reject</option>
-                                                <option value="1">1 -> weak accept</option>
-                                                <option value="2">2 -> accept</option>
+                                            <select class="form-select" name="score" aria-label="Default select example" required>
+                                                <option {% if review_info.score == 0 %}selected{% endif %}>请选择你的评分</option>
+                                                <option value="-2" {% if review_info.score == -2 %}selected{% endif %}>-2 -> reject</option>
+                                                <option value="-1" {% if review_info.score == -1 %}selected{% endif %}>-1 -> weak reject</option>
+                                                <option value="1" {% if review_info.score == 1 %}selected{% endif %}>1 -> weak accept</option>
+                                                <option value="2" {% if review_info.score == 2 %}selected{% endif %}>2 -> accept</option>
                                             </select>
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="basic-addon2">Confidence</span>
-                                            <select class="form-select" aria-label="Default select example" required>
-                                                <option selected>请选择你的Confidence</option>
-                                                <option value="1">very low</option>
-                                                <option value="2">low</option>
-                                                <option value="3">high</option>
-                                                <option value="4">very high</option>
+                                            <select class="form-select" name="confidence" aria-label="Default select example" required>
+                                                <option {% if review_info.score == 0 %}selected{% endif %}>请选择你的Confidence</option>
+                                                <option value="1" {% if review_info.confidence == 1 %}selected{% endif %}>very low</option>
+                                                <option value="2" {% if review_info.confidence == 2 %}selected{% endif %}>low</option>
+                                                <option value="3" {% if review_info.confidence == 3 %}selected{% endif %}>high</option>
+                                                <option value="4" {% if review_info.confidence == 4 %}selected{% endif %}>very high</option>
                                             </select>
                                         </div>
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">评语</span>
-                                            <textarea class="form-control" aria-label="With textarea" maxlength="800" required></textarea>
+                                            <textarea class="form-control" name="comment" aria-label="With textarea" maxlength="800"
+                                                      required>{{ review_info.comment }}</textarea>
                                         </div>
                                         <div class="input-group mb-3">
                                             <button type="submit" class="btn btn-primary">提交</button>
@@ -85,7 +92,27 @@
 
 {% block js %}
 <script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        event.preventDefault();
 
+        var formData = new FormData(this);
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('提交成功');
+                    window.location.reload(); // 刷新页面
+                } else {
+                    alert('提交失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('提交出错');
+            });
+    });
 
 </script>
 {% endblock %}
