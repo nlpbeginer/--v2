@@ -27,10 +27,33 @@ class PaperListView(APIView):
             return Response({'error': '缺少conference_id参数'}, status=status.HTTP_400_BAD_REQUEST)
 
         papers = Paper.objects.filter(conference_id=conference_id)
+
         serializer = PaperSerializer(papers, many=True)
         return Response(serializer.data)
 
 
+class ReviewListView(APIView):
+    """
+    API视图，用于根据paper_id获取审稿记录。
+    """
+
+    def get(self, request, format=None):
+        paper_id = request.query_params.get('paper_id')
+        reviewer_id = request.query_params.get('reviewer_id')
+
+        if not paper_id:
+            return Response({'error': '缺少paper_id参数'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if reviewer_id:
+            reviews = Review.objects.filter(paper_id=paper_id, reviewer_id=reviewer_id)
+        else:
+            reviews = Review.objects.filter(paper_id=paper_id)
+
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 新建一个review记录，用户稿件分配流程
 class NewReviewsView(APIView):
     def post(self, request, format=None):
         serializer = ReviewSerializer(data=request.data)
@@ -40,6 +63,32 @@ class NewReviewsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# 更新review信息，即提交审稿记录
+class UpdateReviewAPI(APIView):
+    def post(self, request, format=None):
+        paper_id = request.data.get('paper_id')
+        reviewer_id = request.data.get('reviewer_id')
+        score = request.data.get('score')
+        confidence = request.data.get('confidence')
+        comment = request.data.get('comment')
+
+        # 找到对应的Review实例
+        review = Review.objects.filter(paper_id=paper_id, reviewer_id=reviewer_id).first()
+        if review is None:
+            return Response({'error': 'Review not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # 更新Review实例
+        review.score = score
+        review.reviewer_id = reviewer_id
+        review.confidence = confidence
+        review.comment = comment
+        review.status = '已审稿'
+        review.save()
+
+        return Response({'status': 'Review updated successfully'}, status=status.HTTP_200_OK)
+
+
+# 获取当前用户的审稿记录
 class MyReviewsView(APIView):
     def get(self, request):
         pc_member_id = request.query_params.get('pc_member_id')
@@ -58,13 +107,17 @@ class MyReviewsView(APIView):
             conference_data = conference_response.json()
             if conference_data['status'] == 'reviewing':
                 paper_review = reviews.get(paper_id=paper['id'])
+
                 paper_data = {
+                    'conference_id': paper['conference_id'],
                     'conference_name': conference_data['full_name'],
+                    'paper_id': paper['id'],
                     'title': paper['title'],
                     'abstract': paper['abstract'],
                     'pdf_url': paper['pdf'],
                     'status': '已审稿' if paper_review.score != 0 else '待审稿'
                 }
+
                 valid_papers.append(paper_data)
 
         return Response(valid_papers, status=status.HTTP_200_OK)
@@ -85,5 +138,3 @@ class MyReviewsView(APIView):
         response = FileResponse(open(file_path, 'rb'))
         response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
         return response
-
-
