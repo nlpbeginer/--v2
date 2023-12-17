@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="page-description">
-                                <h1>新增投稿</h1>
+                                <h1>修改投稿</h1>
                             </div>
                         </div>
                     </div>
@@ -32,27 +32,31 @@
                                     <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;">
                                     </div>
                                 </div>
+                                <input type="hidden" id="paper-id" value="{{ paper_info.id }}">
+
                                 <div class="card-body">
+                                    {% if paper_info.status == 'submitted' %}
+
                                     <form id="paper-submission-form">
-                                        <div class="row mb-3">
-                                            <label for="input_confer_id"
-                                                class="col-sm-2 col-form-label">Conference</label>
-                                            <div class="col-sm-10">
-                                                <select class="js-states form-control" tabindex="-1"
-                                                    id="input_confer_id" style="width: 100%">
-                                                    <optgroup label="Conference List">
-                                                        {% for confer in started_conferences %}
-                                                        <option value="{{ confer.id }}">{{ confer.acronym }}</option>
-                                                        {% endfor %}
-                                                    </optgroup>
-                                                </select>
-                                            </div>
-                                        </div>
+                                        <!-- <div class="row mb-3">
+                                                <label for="input_confer_id"
+                                                    class="col-sm-2 col-form-label">Conference</label>
+                                                <div class="col-sm-10">
+                                                    <select class="js-states form-control" tabindex="-1"
+                                                        id="input_confer_id" style="width: 100%">
+                                                        <optgroup label="Conference List">
+                                                            <option value="{{ paper_info.conference_id }}">{{ paper_info.conference_name }}</option>
+                                                            console.log({{ paper_info.conference_id }})
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                            </div> -->
                                         <div class="row mb-3">
                                             <label for="input_paper_title" class="col-sm-2 col-form-label">Title</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" id="input_paper_title"
-                                                    maxlength="150">
+                                                    maxlength="150" value="{{ paper_info.title }}">
+
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -60,26 +64,29 @@
                                                 class="col-sm-2 col-form-label">Abstract</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" id="input_paper_abstract"
-                                                    maxlength="800">
+                                                    maxlength="800" value="{{ paper_info.abstract }}">
+
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <label for="input_paper_pdf" class="col-sm-2 col-form-label">File</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" id="input_paper_pdf"
-                                                    placeholder="Click to input text">
+                                                    placeholder="Click to input text" value="{{ paper_info.pdf }}">
+
                                             </div>
                                         </div>
                                         <!-- 作者信息部分 -->
                                         <!-- ... 其他代码 ... -->
                                         <!-- <div class="row mb-3">
-                                            <label class="col-sm-2 col-form-label">Include Yourself as Author</label>
-                                            <div class="col-sm-10">
-                                                <input type="checkbox" id="include-self" />
-                                                <label for="include-self">Yes, include me as an author</label>
-                                            </div>
-                                        </div> -->
-                                        <div id="user-info" data-username="{{ user_info.username }}" style="display: none;"></div>
+                                                <label class="col-sm-2 col-form-label">Include Yourself as Author</label>
+                                                <div class="col-sm-10">
+                                                    <input type="checkbox" id="include-self" />
+                                                    <label for="include-self">Yes, include me as an author</label>
+                                                </div>
+                                            </div> -->
+                                        <div id="user-info" data-username="{{ user_info.username }}"
+                                            style="display: none;"></div>
 
                                         <div class="row mb-3">
                                             <label for="authors-container"
@@ -111,6 +118,12 @@
                                             data-bs-dismiss="modal">关闭</button>
                                         <button type="submit" class="btn btn-primary">提交</button>
                                     </form>
+                                    {% else %}
+                                    <div class="alert alert-warning" role="alert">
+                                        当前论文状态不允许更新。
+                                    </div>
+                                    {% endif %}
+
                                 </div>
                             </div>
                         </div>
@@ -126,6 +139,8 @@
 {% block js %}
 <script src="{% static 'assets/plugins/select2/js/select2.full.min.js' %}"></script>
 <script>
+    var csrftoken = '{{ csrf_token }}';
+
     $('select').select2();
 
     function getCurrentUserId() {
@@ -171,6 +186,7 @@
             });
         }
         // 示例：从多选下拉列表中获取选定的 topics
+        var paperId = document.getElementById('paper-id').value;
         var selectedTopics = Array.from(document.getElementById('input_paper_topics').selectedOptions).map(option => option.value);
         var formData = {
             title: document.getElementById('input_paper_title').value,
@@ -182,13 +198,13 @@
             submitted_by: currentUserName,  // 使用用户名
 
         };
-        console.log(JSON.stringify(formData));  // 调试输出
+        // console.log(JSON.stringify(formData));  // 调试输出
 
-        fetch('http://localhost:8003/paper/submit/', {
-            method: 'POST',
+        fetch(`http://localhost:8003/update_paper/${paperId}/`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}' // 确保这里正确处理 CSRF 令牌
+                'X-CSRFToken': csrftoken // 确保这里正确处理 CSRF 令牌
             },
             body: JSON.stringify(formData)
         })

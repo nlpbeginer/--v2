@@ -28,12 +28,20 @@ urlpatterns = [
     path('submit/', views.paper_submit, name='submit'),
     path('invitation/', views.invitation, name='invite'),
     path('my_review/', views.my_review, name='review'),
-    path('rebuttal/', views.rebuttal, name='rebuttal'),
     path('start_review/', views.my_review_start_submit, name='start-review'),
     path('register/', views.register, name='register'),
     path('login_check/', views.login_check, name='login_check'),
     path('logout/', views.logout, name='logout'),
     path('create_conference/', views.create_conference, name='conference-create'),
     path('conference/approve_reject/', views.approve_reject_conference, name='approve-reject-conference'),
+    path('my_submissions/', views.my_submissions, name='my_submissions'),
+    path('paper_submit/', views.paper_submit, name='paper_submit'),
+    path('my_submissions/update', views.my_submissions_update, name='my_submissions_update'),
+    path('my_submissions/rebuttal', views.my_submissions_rebuttal, name='my_submissions_rebuttal'),
+    path('my_submissions/pcmember_rebuttal', views.pcmember_rebuttal, name='pcmember_rebuttal'),
+
+
+                                                      
+
 
 ]

@@ -259,3 +259,89 @@ def rebuttal(request):
     user_info = request.session.get('user_info')
 
     return render(request, 'rebuttal.html', {'user_info': user_info})
+
+
+
+
+def my_submissions(request):
+    user_info = request.session.get('user_info')
+
+    # 向后端 API 发送请求以获取当前用户的所有投稿
+    response = requests.get(f'http://localhost:8003/my_submissions/?username={user_info["username"]}')
+    # print("response:", response)
+    if response.status_code == 200:
+        submissions = response.json()
+    else:
+        submissions = []
+
+    # print("submissions:", submissions)
+    return render(request, 'my-submissions.html', {
+        'user_info': user_info,
+        'submissions': submissions
+    })
+
+def my_submissions_rebuttal(request):
+    user_info = request.session.get('user_info')
+
+    # 向后端 API 发送请求以获取当前用户的所有review
+    paper_id = request.GET.get('paper_id')
+    print("正在根据paper_id查找review,paper_id号为:", paper_id)
+    response = requests.get(f'http://localhost:8003/reviews/rebuttal/{paper_id}')
+    print("response:", response)
+    if response.status_code == 200:
+        reviews = response.json()
+    else:
+        reviews = []
+
+    # 判断是否有评分为 -1 或 -2 的评审
+    show_rebuttal = any(review['score'] in [-1, -2] for review in reviews)
+
+    print("reviews:", reviews)
+    return render(request, 'rebuttal.html', {
+        'user_info': user_info,
+        'reviews': reviews,
+        'show_rebuttal': show_rebuttal  # 将该变量传递到模板中
+    })
+
+def pcmember_rebuttal(request):
+    user_info = request.session.get('user_info')
+
+    # 向后端 API 发送请求以获取当前用户的所有review
+    paper_id = request.GET.get('paper_id')
+    print("正在根据paper_id查找review,paper_id号为:", paper_id)
+    response = requests.get(f'http://localhost:8003/reviews/rebuttal/{paper_id}')
+    print("response:", response)
+    if response.status_code == 200:
+        reviews = response.json()
+    else:
+        reviews = []
+
+    # 判断是否有评分为 -1 或 -2 的评审
+    show_rebuttal = any(review['score'] in [-1, -2] for review in reviews)
+
+    print("reviews:", reviews)
+    return render(request, 'pcmember_rebuttal.html', {
+        'user_info': user_info,
+        'reviews': reviews,
+        'show_rebuttal': show_rebuttal  # 将该变量传递到模板中
+    })
+
+def my_submissions_update(request):
+    user_info = request.session.get('user_info')
+    # print("user_info",user_info)
+    paper_id = request.GET.get('paper_id')
+    # print("paper_id",paper_id)
+
+    ###向paper service 发起请求，根据papaerid 找paper信息
+    response = requests.get(f'http://localhost:8003/my_submissions/update/?paper_id={paper_id}')
+    if response.status_code == 200:
+        paper_info_list = response.json()
+        paper_info = paper_info_list[0]
+        print("paper_info",paper_info)
+    else:
+        paper_info = []
+    
+    return render(request, 'paper-submit-update.html', {'user_info': user_info, 'paper_info': paper_info})
+
+    
+

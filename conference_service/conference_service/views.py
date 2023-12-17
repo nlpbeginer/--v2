@@ -114,9 +114,13 @@ class ConferenceAllocateView(APIView):
                 review_data = {
                     'paper_id': paper['id'],
                     'reviewer_id': reviewer_id,
+                    'confidence':0,
                     'score': 0,
                     'comment': '',
-                    'decision': ''
+                    'decision': '',
+                    'rebuttal': '',
+                    'status': '待审稿',
+                    'conference_id': conference_id,
                 }
                 review_response = requests.post('http://localhost:8003/reviews/create/', json=review_data)
                 if review_response.status_code != 201:

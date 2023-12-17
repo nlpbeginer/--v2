@@ -33,7 +33,8 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <h5 class="card-title">我的会议申请</h5>
-                                            <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;"></div>
+                                            <div id="current-user-id" data-user-id="{{ user_info.id }}"
+                                                style="display: none;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -42,76 +43,106 @@
                                         <div class="table-responsive">
                                             <table class="table table-hover">
                                                 <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">简称</th>
-                                                    <th scope="col">全称</th>
-                                                    <th scope="col">举办时间</th>
-                                                    <th scope="col">举办地点</th>
-                                                    <th scope="col">投稿截止</th>
-                                                    <th scope="col">状态</th>
-                                                    <th scope="col">操作</th>
-                                                </tr>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">简称</th>
+                                                        <th scope="col">全称</th>
+                                                        <th scope="col">举办时间</th>
+                                                        <th scope="col">举办地点</th>
+                                                        <th scope="col">投稿截止</th>
+                                                        <th scope="col">状态</th>
+                                                        <th scope="col">操作</th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% for conference in my_conferences %}
-                                                <tr>
-                                                    <th scope="row">{{conference.id}}</th>
-                                                    <td>{{conference.acronym}}</td>
-                                                    <td>{{conference.full_name}}</td>
-                                                    <td>{{conference.held_date}}</td>
-                                                    <td>{{conference.location}}</td>
-                                                    <td>{{conference.submission_deadline}}</td>
-                                                    <td>{{conference.status}}</td>
-                                                    <td>
-                                                        {% if conference.status == 'approved' %}
-                                                        <!--                                                        <button type="button" class="btn btn-success" id='start-conference-btn'>开启会议</button>-->
-                                                        <button type="button" class="btn btn-success start-conference-btn"
+                                                    {% for conference in my_conferences %}
+                                                    <tr>
+                                                        <th scope="row">{{conference.id}}</th>
+                                                        <td>{{conference.acronym}}</td>
+                                                        <td>{{conference.full_name}}</td>
+                                                        <td>{{conference.held_date}}</td>
+                                                        <td>{{conference.location}}</td>
+                                                        <td>{{conference.submission_deadline}}</td>
+                                                        <td>{{conference.status}}</td>
+                                                        <td>
+                                                            {% if conference.status == 'approved' %}
+                                                            <!--                                                        <button type="button" class="btn btn-success" id='start-conference-btn'>开启会议</button>-->
+                                                            <button type="button"
+                                                                class="btn btn-success start-conference-btn"
                                                                 data-id="{{ conference.id }}">开启会议
-                                                        </button>
-                                                        <button type="button" class="btn btn-primary m-b-sm" disabled>邀请PC
-                                                        </button>
-                                                        <button type="button" class="btn btn-secondary m-b-sm" disabled>开启审稿
-                                                        </button>
-                                                        <button type="button" class="btn btn-info m-b-sm allocate-paper-btn"
+                                                            </button>
+                                                            <button type="button" class="btn btn-primary m-b-sm"
+                                                                disabled>邀请PC
+                                                            </button>
+                                                            <button type="button" class="btn btn-secondary m-b-sm"
+                                                                disabled>开启审稿
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-info m-b-sm allocate-paper-btn"
                                                                 data-id="{{ conference.id }}" disabled>分配稿件
-                                                        </button>
-                                                        {% elif conference.status == 'started' %}
-                                                        <button type="button" class="btn btn-success" disabled>开启会议</button>
-                                                        <button type="button" class="btn btn-primary m-b-sm invite-pc-btn" data-bs-toggle="modal"
-                                                                data-bs-target="#invite_pc_model" data-conference-id="{{ conference.id }}">邀请PC
-                                                        </button>
-                                                        <button type="button" class="btn btn-secondary m-b-sm start-reviewing-btn"
+                                                            </button>
+                                                            {% elif conference.status == 'started' %}
+                                                            <button type="button" class="btn btn-success"
+                                                                disabled>开启会议</button>
+                                                            <button type="button"
+                                                                class="btn btn-primary m-b-sm invite-pc-btn"
+                                                                data-bs-toggle="modal" data-bs-target="#invite_pc_model"
+                                                                data-conference-id="{{ conference.id }}">邀请PC
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-secondary m-b-sm start-reviewing-btn"
                                                                 data-id="{{ conference.id }}">开启审稿
-                                                        </button>
-                                                        <button type="button" class="btn btn-info m-b-sm allocate-paper-btn"
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-info m-b-sm allocate-paper-btn"
                                                                 data-id="{{ conference.id }}" disabled>分配稿件
-                                                        </button>
-                                                        {% elif conference.status == 'reviewing' %}
-                                                        <button type="button" class="btn btn-success" disabled>开启会议</button>
-                                                        <button type="button" class="btn btn-primary m-b-sm invite-pc-btn" data-bs-toggle="modal"
-                                                                data-bs-target="#invite_pc_model" data-conference-id="{{ conference.id }}">邀请PC
-                                                        </button>
-                                                        <button type="button" class="btn btn-secondary m-b-sm start-reviewing-btn"
+                                                            </button>
+                                                            {% elif conference.status == 'reviewing' %}
+                                                            <button type="button" class="btn btn-success"
+                                                                disabled>开启会议</button>
+                                                            <button type="button"
+                                                                class="btn btn-primary m-b-sm invite-pc-btn"
+                                                                data-bs-toggle="modal" data-bs-target="#invite_pc_model"
+                                                                data-conference-id="{{ conference.id }}">邀请PC
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-secondary m-b-sm start-reviewing-btn"
                                                                 data-id="{{ conference.id }}" disabled>开启审稿
-                                                        </button>
-                                                        <button type="button" class="btn btn-info m-b-sm allocate-paper-btn"
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-info m-b-sm allocate-paper-btn"
                                                                 data-id="{{ conference.id }}">分配稿件
-                                                        </button>
-                                                        {% else %}
-                                                        <button type="button" class="btn btn-success" disabled>开启会议</button>
-                                                        <button type="button" class="btn btn-primary m-b-sm" data-bs-toggle="modal"
-                                                                data-bs-target="#invite_pc_model" disabled>邀请PC
-                                                        </button>
-                                                        <button type="button" class="btn btn-secondary m-b-sm" disabled>开启审稿
-                                                        </button>
-                                                        <button type="button" class="btn btn-info m-b-sm allocate-paper-btn"
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-warning publish-scores-btn"
+                                                                data-id="{{ conference.id }}">发布评分
+                                                            </button>
+                                                            {% elif conference.status == 'reviewing_ended' %}
+                                                            <button type="button"
+                                                                class="btn btn-dark publish-results-btn"
+                                                                data-id="{{ conference.id }}">发布结果</button>
+
+                                                            {% else %}
+                                                            <button type="button" class="btn btn-success"
+                                                                disabled>开启会议</button>
+                                                            <button type="button" class="btn btn-primary m-b-sm"
+                                                                data-bs-toggle="modal" data-bs-target="#invite_pc_model"
+                                                                disabled>邀请PC
+                                                            </button>
+                                                            <button type="button" class="btn btn-secondary m-b-sm"
+                                                                disabled>开启审稿
+                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-info m-b-sm allocate-paper-btn"
                                                                 data-id="{{ conference.id }}" disabled>分配稿件
-                                                        </button>
-                                                        {% endif %}
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
+                                                            </button>
+                                                            <button type="button" class="btn btn-warning"
+                                                                disabled>发布评分</button>
+
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -130,7 +161,7 @@
                                         </div>
                                         <div class="col-2">
                                             <button type="button" class="btn btn-primary m-b-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#add_confer_model">
+                                                data-bs-target="#add_confer_model">
                                                 <i class="material-icons">add</i>会议申请
                                             </button>
                                         </div>
@@ -141,41 +172,43 @@
                                         <div class="table-responsive">
                                             <table class="table table-hover">
                                                 <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">简称</th>
-                                                    <th scope="col">全称</th>
-                                                    <th scope="col">主题</th>
-                                                    <th scope="col">主席</th>
-                                                    <th scope="col">举办时间</th>
-                                                    <th scope="col">举办地点</th>
-                                                    <th scope="col">投稿截止</th>
-                                                    <th scope="col">状态</th>
-                                                    <th scope="col">操作</th>
-                                                </tr>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">简称</th>
+                                                        <th scope="col">全称</th>
+                                                        <th scope="col">主题</th>
+                                                        <th scope="col">主席</th>
+                                                        <th scope="col">举办时间</th>
+                                                        <th scope="col">举办地点</th>
+                                                        <th scope="col">投稿截止</th>
+                                                        <th scope="col">状态</th>
+                                                        <th scope="col">操作</th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% for conference in all_conferences %}
-                                                <tr>
-                                                    <th scope="row">{{conference.id}}</th>
-                                                    <td>{{conference.acronym}}</td>
-                                                    <td>{{conference.full_name}}</td>
-                                                    <td>{{conference.topics}}</td>
-                                                    <td>{{conference.chair_name}}</td>
-                                                    <td>{{conference.held_date}}</td>
-                                                    <td>{{conference.location}}</td>
-                                                    <td>{{conference.submission_deadline}}</td>
-                                                    <td>{{conference.status}}</td>
-                                                    <td>
-                                                        {% if conference.status == 'started' %}
-                                                        <button type="button" class="btn btn-dark" onclick="window.location.href='/submit';">投稿
-                                                        </button>
-                                                        {% else %}
-                                                        <button type="button" class="btn btn-dark" disabled>投稿</button>
-                                                        {% endif %}
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
+                                                    {% for conference in all_conferences %}
+                                                    <tr>
+                                                        <th scope="row">{{conference.id}}</th>
+                                                        <td>{{conference.acronym}}</td>
+                                                        <td>{{conference.full_name}}</td>
+                                                        <td>{{conference.topics}}</td>
+                                                        <td>{{conference.chair_name}}</td>
+                                                        <td>{{conference.held_date}}</td>
+                                                        <td>{{conference.location}}</td>
+                                                        <td>{{conference.submission_deadline}}</td>
+                                                        <td>{{conference.status}}</td>
+                                                        <td>
+                                                            {% if conference.status == 'started' %}
+                                                            <button type="button" class="btn btn-dark"
+                                                                onclick="window.location.href='/submit';">投稿
+                                                            </button>
+                                                            {% else %}
+                                                            <button type="button" class="btn btn-dark"
+                                                                disabled>投稿</button>
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -191,7 +224,8 @@
 </div>
 
 <!-- Vertically centered modal -->
-<div class="modal fade" id="add_confer_model" tabindex="-1" aria-labelledby="addConferModelTitle" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="add_confer_model" tabindex="-1" aria-labelledby="addConferModelTitle" style="display: none;"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -204,48 +238,51 @@
                     <div class="row mb-3">
                         <label for="input_confer_abbre" class="col-sm-2 col-form-label">会议简称</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_confer_abbre" name="input_confer_abbre" required>
+                            <input type="text" class="form-control" id="input_confer_abbre" name="input_confer_abbre"
+                                required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="input_confer_full" class="col-sm-2 col-form-label">会议全称</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_confer_full" name="input_confer_full" required>
+                            <input type="text" class="form-control" id="input_confer_full" name="input_confer_full"
+                                required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="input_confer_full" class="col-sm-2 col-form-label">会议主题</label>
                         <div class="col-sm-10">
-                            <select class="js-example-tokenizer js-states form-control" name="input_confer_topics" multiple="multiple" tabindex="-1"
-                                    style="display: none; width: 100%" required>
+                            <select class="js-example-tokenizer js-states form-control" name="input_confer_topics"
+                                multiple="multiple" tabindex="-1" style="display: none; width: 100%" required>
                             </select>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="input_held_time" class="col-sm-2 col-form-label">举办时间</label>
                         <div class="col-sm-10">
-                            <input class="form-control flatpickr2" type="text" id="input_held_time" name="input_held_time"
-                                   placeholder="Select Time.." required>
+                            <input class="form-control flatpickr2" type="text" id="input_held_time"
+                                name="input_held_time" placeholder="Select Time.." required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="input_held_locate" class="col-sm-2 col-form-label">举办地点</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="input_held_locate" name="input_held_locate" required>
+                            <input type="text" class="form-control" id="input_held_locate" name="input_held_locate"
+                                required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="input_submit_ddl" class="col-sm-2 col-form-label">投稿截止日期</label>
                         <div class="col-sm-10">
-                            <input class="form-control flatpickr2" type="text" id="input_submit_ddl" name="input_submit_ddl"
-                                   placeholder="Select Time.." required>
+                            <input class="form-control flatpickr2" type="text" id="input_submit_ddl"
+                                name="input_submit_ddl" placeholder="Select Time.." required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="input_review_ddl" class="col-sm-2 col-form-label">审稿结束</label>
                         <div class="col-sm-10">
-                            <input class="form-control flatpickr2" type="text" id="input_review_ddl" name="input_review_ddl"
-                                   placeholder="Select Time.." required>
+                            <input class="form-control flatpickr2" type="text" id="input_review_ddl"
+                                name="input_review_ddl" placeholder="Select Time.." required>
                         </div>
                     </div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
@@ -260,7 +297,8 @@
     </div>
 </div>
 
-<div class="modal fade" id="invite_pc_model" tabindex="-1" aria-labelledby="invitePCModelTitle" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="invite_pc_model" tabindex="-1" aria-labelledby="invitePCModelTitle" style="display: none;"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -270,25 +308,25 @@
             <div class="modal-body">
                 <table class="table table-hover" id="pc_invitation_table">
                     <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">选取</th>
-                        <th scope="col">用户名</th>
-                        <th scope="col">邮箱</th>
-                        <th scope="col">区域</th>
-                        <th scope="col">状态</th>
-                    </tr>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">选取</th>
+                            <th scope="col">用户名</th>
+                            <th scope="col">邮箱</th>
+                            <th scope="col">区域</th>
+                            <th scope="col">状态</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>
-                            <input type="checkbox" name="checked_items" value="{{ item.id }}">
-                        </td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>
+                                <input type="checkbox" name="checked_items" value="{{ item.id }}">
+                            </td>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
                     </tbody>
                 </table>
                 <!--                <button type="submit" class="btn btn-primary">邀请</button>-->
@@ -512,7 +550,41 @@
             });
     });
 
+
+
+    // 页面加载后添加事件监听器
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.publish-scores-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                var conferenceId = this.getAttribute('data-id');
+                publishScores(conferenceId);
+            });
+        });
+    });
+
+    function publishScores(conferenceId) {
+        fetch(`http://localhost:8003/publish-scores/${conferenceId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('评分发布成功！');
+                    window.location.reload();
+                } else {
+                    alert(data.error || '发生未知错误');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('网络请求失败，请检查网络连接或联系管理员');
+            });
+    }
+
 </script>
 
 {% endblock %}
-

@@ -18,13 +18,20 @@ from django.contrib import admin
 from django.urls import path
 from .views import *
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('papers/', PaperListView.as_view(), name='paper-list'),
     path('paper/submit/', PaperSubmissionView.as_view(), name='paper-submit'),
+    path('my_submissions/', MySubmissionsView.as_view(), name='my_submissions_api'),
+    path('my_submissions/update/', MySubmissionUpdateView.as_view(), name='my_submissions_update_api'),
+    path('update_paper/<int:paper_id>/', UpdatePaperView.as_view(), name='update-paper'),
     path('reviews/', ReviewListView.as_view(), name='review-list'),
     path('reviews/create/', NewReviewsView.as_view(), name='reviews-create'),
     path('reviews/show/', MyReviewsView.as_view(), name='reviews-show'),
     path('reviews/update/', UpdateReviewAPI.as_view(), name='reviews-update'),
+    path('reviews/rebuttal/<int:paper_id>/', RebuttalView.as_view(), name='rebuttal'),
+    path('reviews/update-rebuttal/<int:paper_id>/<int:reviewer_id>/', UpdateRebuttalView.as_view(), name='update-rebuttal'),
+        
 
 ]

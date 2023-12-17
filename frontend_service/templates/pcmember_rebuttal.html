@@ -46,7 +46,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="page-description">
-                                <h1>rebuttal</h1>
+                                <h1>Reviews</h1>
                             </div>
                         </div>
                     </div>
@@ -60,14 +60,7 @@
                                                 style="display: none;"></div>
                                         </div>
                                     </div>
-                                    <!-- <dl class="row">
-                                        <dt class="col-sm-3">标题</dt>
-                                        <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
-                                    </dl>
-                                    <dl class="row">
-                                        <dt class="col-sm-3">摘要</dt>
-                                        <dd class="col-sm-9">A description list is perfect for defining terms.</dd>
-                                    </dl> -->
+
                                 </div>
                                 <div class="card-body">
                                     <form onsubmit="return false;">
@@ -83,23 +76,12 @@
                                                 <p><strong>评分：</strong>{{ review.score }}</p>
                                                 <p><strong>信心值：</strong>{{ review.confidence }}</p>
                                                 <p><strong>评语：</strong>{{ review.comment }}</p>
+                                                <p><strong>反驳：</strong>{{ review.rebuttal }}</p>
                                             </div>
-                                            <!-- 新的反驳输入部分 -->
-                                            {% if show_rebuttal %}
-                                            <div class="rebuttal-entry">
-                                                <input type="hidden" class="review-id" value="{{ review.id }}">
-                                                <textarea class="rebuttal-text" name="rebuttal" placeholder="请输入您的反驳内容..." maxlength="800"></textarea>
-                                            </div>
-                                            {% endif %}
+
 
                                             {% endfor %}
                                         </div>
-                                        {% if show_rebuttal %}
-                                        <div class="input-group mb-3">
-                                            <button type="submit" class="btn btn-primary" id="submit-rebuttals-btn">提交rebuttal</button>
-                                        </div>
-                                        
-                                        {% endif %}
                                     </form>
                                 </div>
                             </div>

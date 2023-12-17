@@ -31,7 +31,8 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <h5 class="card-title">待审稿</h5>
-                                            <div id="current-user-id" data-user-id="{{ user_info.id }}" style="display: none;"></div>
+                                            <div id="current-user-id" data-user-id="{{ user_info.id }}"
+                                                style="display: none;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -40,44 +41,69 @@
                                         <div class="table-responsive">
                                             <table class="table table-hover" id="invitation-table">
                                                 <thead>
-                                                <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">会议</th>
-                                                    <th scope="col">标题</th>
-                                                    <th scope="col">摘要</th>
-                                                    <th scope="col">预览</th>
-                                                    <th scope="col">状态</th>
-                                                    <th scope="col">操作</th>
-                                                </tr>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">会议</th>
+                                                        <th scope="col">标题</th>
+                                                        <th scope="col">摘要</th>
+                                                        <th scope="col">预览</th>
+                                                        <th scope="col">状态</th>
+                                                        <th scope="col">操作</th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% for review in review_info %}
-                                                <tr>
-                                                    <th scope="row">{{ forloop.counter }}</th>
-                                                    <td>{{ review.conference_name }}</td>
-                                                    <td>{{ review.title }}</td>
-                                                    <td>{{ review.abstract }}</td>
-                                                    <td><a href="" target="_blank">预览</a></td>
-                                                    <td>{{ review.status }}</td>
-                                                    <td>
-                                                        <a href="" class="btn btn-info" download>下载</a>
-                                                        <!-- 根据需求添加审稿按钮的逻辑 -->
-                                                        <!--<a href="/start_review" class="btn btn-primary">审稿</a>-->
-                                                        <form action="/start_review/" method="post">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="conference_name" value="{{ review.conference_name }}">
-                                                            <input type="hidden" name="paper_id" value="{{ review.paper_id }}">
-                                                            <input type="hidden" name="title" value="{{ review.title }}">
-                                                            <input type="hidden" name="abstract" value="{{ review.abstract }}">
-                                                            <button type="submit" class="btn btn-primary">审稿</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                                {% empty %}
-                                                <tr>
-                                                    <td colspan="6">没有分配的审稿</td>
-                                                </tr>
-                                                {% endfor %}
+                                                    {% for review in review_info %}
+                                                    <tr>
+                                                        <th scope="row">{{ forloop.counter }}</th>
+                                                        <td>{{ review.conference_name }}</td>
+                                                        <td>{{ review.title }}</td>
+                                                        <td>{{ review.abstract }}</td>
+                                                        <td><a href="" target="_blank">预览</a></td>
+                                                        <td>{{ review.status }}</td>
+                                                        <td>
+                                                            <a href="" class="btn btn-info" download>下载</a>
+
+                                                            <!-- 根据状态显示不同按钮 -->
+                                                            {% if review.status == '已审稿' %}
+                                                            <form action="/start_review/" method="post">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="conference_name"
+                                                                    value="{{ review.conference_name }}">
+                                                                <input type="hidden" name="paper_id"
+                                                                    value="{{ review.paper_id }}">
+                                                                <input type="hidden" name="title"
+                                                                    value="{{ review.title }}">
+                                                                <input type="hidden" name="abstract"
+                                                                    value="{{ review.abstract }}">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">改分</button>
+                                                            </form>
+                                                            {% else %}
+                                                            <form action="/start_review/" method="post">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" name="conference_name"
+                                                                    value="{{ review.conference_name }}">
+                                                                <input type="hidden" name="paper_id"
+                                                                    value="{{ review.paper_id }}">
+                                                                <input type="hidden" name="title"
+                                                                    value="{{ review.title }}">
+                                                                <input type="hidden" name="abstract"
+                                                                    value="{{ review.abstract }}">
+                                                                <button type="submit"
+                                                                    class="btn btn-primary">审稿</button>
+                                                            </form>
+                                                            {% endif %}
+
+                                                            <a href="/my_submissions/pcmember_rebuttal?paper_id={{ review.paper_id }}"
+                                                                class="btn btn-info">反驳</a>
+
+                                                        </td>
+                                                    </tr>
+                                                    {% empty %}
+                                                    <tr>
+                                                        <td colspan="6">没有分配的审稿</td>
+                                                    </tr>
+                                                    {% endfor %}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -99,4 +125,3 @@
 
 </script>
 {% endblock %}
-
