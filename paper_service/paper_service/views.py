@@ -8,7 +8,7 @@ from rest_framework import status
 from django.http import FileResponse
 from .serializers import PaperSerializer, ReviewSerializer
 from .models import Paper, Review
-
+import random
 
 class PaperSubmissionView(APIView):
     def post(self, request, format=None):
@@ -215,7 +215,31 @@ class UpdatePaperView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#    path('update_paper/conference/<int:conference_id>/', UpdatePaperConferenceView.as_view(), name='update-paper-conference'),
+class UpdatePaperConferenceView(APIView):
+    def post(self, request, conference_id, format=None):
+        # 使用 filter() 而不是 get()
+        papers = Paper.objects.filter(conference_id=conference_id)
         
+        # 如果没有找到任何论文，返回404错误
+        if not papers:
+            return Response({'error': 'No papers found for this conference'}, status=status.HTTP_404_NOT_FOUND)
+
+        # 更新每篇论文的状态
+        for paper in papers:
+            #随机拒绝或接受论文
+            if random.randint(0, 1) == 0:
+                paper.status = 'rejected'
+            else:
+                paper.status = 'accepted'
+            paper.save()
+
+        # 将所有更新后的论文序列化并返回
+        serializer = PaperSerializer(papers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
 class UpdateRebuttalView (APIView):
     def put(self, request, paper_id, reviewer_id ,format=None):
         try:
@@ -240,3 +264,37 @@ class RebuttalView(APIView):
         serializer = ReviewSerializer(reviews, many=True)
         # print("serializer.data", serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class CheckReviewsView(APIView):
+    def post(self, request, conferenceId, *args, **kwargs):
+
+        print("查找conferenceId对应的review, conferenceID:", conferenceId)
+        reviews = Review.objects.filter(conference_id=conferenceId)
+        for review in reviews:
+            if review.status == '待审稿':
+                return Response({'status': '还有未审稿的论文'}, status=status.HTTP_200_OK) 
+
+        ### 更新会议状态
+        print("更新会议状态")
+        #    path('conference/detail/', ConferenceDetailView.as_view(), name='conference-detail'),
+        conference_response = requests.get(f'http://localhost:8002/conference/detail/?conference_id={conferenceId}')
+        if conference_response.status_code != 200:
+            print("请求conference状态1失败:", conference_response)
+        conference_data = conference_response.json()
+        conference_data['status'] = 'reviewed'
+        # 设置请求的JSON主体
+        # 设置请求的JSON主体来更新会议状态
+        data = {    
+            'id': conferenceId,
+            'status': 'rebuttal'  # 根据您的业务逻辑设置正确的状态
+        }
+        # 发送POST请求
+        conference_response = requests.post(
+            'http://localhost:8002/conference/update-status/',
+            json=data
+        )
+        if conference_response.status_code != 200:
+            print("更新conference状态失败:", conference_response)
+
+        print("更新会议状态成功")
+        return Response({'status': '所有论文都已审稿，发布成功！'}, status=status.HTTP_200_OK)
